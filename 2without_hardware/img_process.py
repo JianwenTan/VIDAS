@@ -212,7 +212,7 @@ class Image_Processing:
             #   获取ROI感兴趣区间
             img_ROI = img_dst[(self.__roiPos[0][0] + num_down):(self.__roiPos[0][1] + num_down),
                       self.__roiPos[1][0]:self.__roiPos[1][1]]
-            cv.imwrite('img.jpeg', img_ROI)
+            # cv.imwrite('img.jpeg', img_ROI)
             circle = cv.HoughCircles(img_ROI, cv.HOUGH_GRADIENT, 0.5, 400, param1=100, param2=8, minRadius=50,
                                      maxRadius=150)
             #   当前ROI未找到定位点
