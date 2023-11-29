@@ -1,5 +1,6 @@
 import math
 import operator
+import random
 import time
 import numpy as np
 import cv2 as cv
@@ -605,6 +606,12 @@ class Image_Processing:
         print("7    开始——圈定试剂点")
         #   开始时间
         start = time.perf_counter()
+
+        delay = random.randint(1,199999999)
+        print("设定延时时间 %.4f" % (delay/100000000))
+        #   延时
+        for _ in range(delay):
+            pass
 
         gray_aver, img_rota, judge_1 = self.img_get_gray(img_rota, gray_aver, point_x, point_y, dis_error, radius)
 
