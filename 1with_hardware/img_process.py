@@ -148,12 +148,12 @@ class Image_Processing:
         #   读取原始图像，并灰度化
         img_original = cv.cvtColor(cv.imread(path_read), cv.COLOR_RGB2GRAY)
         #   顺时针旋转90度
-        (w, h) = img_original.shape[:2]
-        center = (w // 2, h // 2)
-        M = cv.getRotationMatrix2D(center, -90, 1.0)
-        img_original = cv.warpAffine(img_original, M, (w, h))
-        #   圈定图像获取区域
-        img_original = img_original[0:w, (h - 2500):h]
+        # (w, h) = img_original.shape[:2]
+        # center = (w // 2, h // 2)
+        # M = cv.getRotationMatrix2D(center, -90, 1.0)
+        # img_original = cv.warpAffine(img_original, M, (w, h))
+        # #   圈定图像获取区域
+        # img_original = img_original[0:w, (h - 2500):h]
 
         return img_original
 
@@ -211,7 +211,7 @@ class Image_Processing:
             circle = cv.HoughCircles(img_ROI, cv.HOUGH_GRADIENT, 0.5, 400, param1=100, param2=8, minRadius=50,
                                      maxRadius=150)
             endtime = datetime.datetime.now()
-            time_use =  (endtime - starttime).seconds * 1000 + (endtime - starttime).microseconds / 1000
+            time_use = (endtime - starttime).seconds * 1000 + (endtime - starttime).microseconds / 1000
             # print('funtion time use:%dms' % (time_use))
             if time_use >= 100:
                 break
@@ -602,5 +602,5 @@ if __name__ == '__main__':
         roi_position=roi_position
     )
 
-    imgPro.process(path_read='picture/2-1.jpeg', path_write='./img_out/', reagent=(8, 5),
-                   radius=40)
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\2-1.jpeg', path_write='./img_out/',
+                   reagent=(8, 5), radius=40)
