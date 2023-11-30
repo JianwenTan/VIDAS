@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <italic>false</italic>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>801</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="listOne_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Adobe Devanagari</family>
+         <pointsize>20</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgb(5, 171, 194);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+}
+QPushButton:pressed
+{
+	background-color: rgb(255, 255, 255);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+	/*按下时字向右移动4像素*/  
+    padding-left:4px;
+    /*按下时字向下移动4像素*/  
+    padding-top:4px;
+}</string>
+       </property>
+       <property name="text">
+        <string>系统设置</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/4.png</normaloff>icon/4.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="listOne_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Adobe Devanagari</family>
+         <pointsize>20</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgb(5, 171, 194);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+}
+QPushButton:pressed
+{
+	background-color: rgb(255, 255, 255);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+	/*按下时字向右移动4像素*/  
+    padding-left:4px;
+    /*按下时字向下移动4像素*/  
+    padding-top:4px;
+}</string>
+       </property>
+       <property name="text">
+        <string>历史记录</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/2.png</normaloff>icon/2.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="listOne_1">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Adobe Devanagari</family>
+         <pointsize>20</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::NoContextMenu</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgb(5, 171, 194);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+}
+QPushButton:pressed
+{
+	background-color: rgb(255, 255, 255);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+	/*按下时字向右移动4像素*/  
+    padding-left:4px;
+    /*按下时字向下移动4像素*/  
+    padding-top:4px;
+}</string>
+       </property>
+       <property name="text">
+        <string>荧光检疫</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/1.png</normaloff>icon/1.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>45</width>
+         <height>45</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="listOne_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Adobe Devanagari</family>
+         <pointsize>20</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgb(5, 171, 194);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+}
+QPushButton:pressed
+{
+	background-color: rgb(255, 255, 255);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+	/*按下时字向右移动4像素*/  
+    padding-left:4px;
+    /*按下时字向下移动4像素*/  
+    padding-top:4px;
+}</string>
+       </property>
+       <property name="text">
+        <string>检疫设置</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/3.png</normaloff>icon/3.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>280</y>
+      <width>801</width>
+      <height>72</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QPushButton" name="pushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgb(5, 171, 194);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+}
+QPushButton:pressed
+{
+	background-color: rgb(255, 255, 255);
+	font: pt &quot;宋体&quot;;
+	font: 20pt &quot;Adobe Devanagari&quot;;
+	border-radius: 30px;  
+	border: 3px groove black;
+	border-style: outset;
+	/*按下时字向右移动4像素*/  
+    padding-left:4px;
+    /*按下时字向下移动4像素*/  
+    padding-top:4px;
+}</string>
+       </property>
+       <property name="text">
+        <string>电     源</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/5.png</normaloff>icon/5.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
