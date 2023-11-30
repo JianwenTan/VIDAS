@@ -148,12 +148,12 @@ class Image_Processing:
         #   读取原始图像，并灰度化
         img_original = cv.cvtColor(cv.imread(path_read), cv.COLOR_RGB2GRAY)
         #   顺时针旋转90度
-        # (w, h) = img_original.shape[:2]
-        # center = (w // 2, h // 2)
-        # M = cv.getRotationMatrix2D(center, -90, 1.0)
-        # img_original = cv.warpAffine(img_original, M, (w, h))
-        # #   圈定图像获取区域
-        # img_original = img_original[0:w, (h - 2500):h]
+        (w, h) = img_original.shape[:2]
+        center = (w // 2, h // 2)
+        M = cv.getRotationMatrix2D(center, -90, 1.0)
+        img_original = cv.warpAffine(img_original, M, (w, h))
+        #   圈定图像获取区域
+        img_original = img_original[0:w, (h - 2500):h]
 
         return img_original
 
@@ -645,7 +645,7 @@ if __name__ == '__main__':
     #   开始时间
     # start = time.perf_counter()
 
-    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\2-7.jpeg', path_write='./img_out/',
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\1.jpeg', path_write='./img_out/',
                    reagent=(8, 5), radius=40)
 
     #   结束时间
