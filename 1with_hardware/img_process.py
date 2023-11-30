@@ -205,16 +205,15 @@ class Image_Processing:
             #   获取ROI感兴趣区间
             img_ROI = img_dst[(self.__roiPos[0][0] + num_down):(self.__roiPos[0][1] + num_down),
                       self.__roiPos[1][0]:self.__roiPos[1][1]]
-            # cv.imwrite('img.jpeg', img_ROI)
 
-            starttime = datetime.datetime.now()
+            # starttime = datetime.datetime.now()
             circle = cv.HoughCircles(img_ROI, cv.HOUGH_GRADIENT, 0.5, 400, param1=100, param2=8, minRadius=50,
                                      maxRadius=150)
-            endtime = datetime.datetime.now()
-            time_use = (endtime - starttime).seconds * 1000 + (endtime - starttime).microseconds / 1000
+            # endtime = datetime.datetime.now()
+            # time_use = (endtime - starttime).seconds * 1000 + (endtime - starttime).microseconds / 1000
             # print('funtion time use:%dms' % (time_use))
-            if time_use >= 100:
-                break
+            # if time_use >= 100:
+            #     break
 
             #   当前ROI未找到定位点
             if circle is None:
@@ -243,6 +242,14 @@ class Image_Processing:
                     if diff_x1[i] > 200:
                         exit_flag += 1
                         break
+                if exit_flag != 0:
+                    print("---------------------")
+                    print("区间下移量：", num_down)
+                    print("退出标志为：", exit_flag)
+                    circle_x.clear()
+                    circle_y.clear()
+                    circle_r.clear()
+                    continue
 
                 #   标志2：检测定位点X轴，像素误差小于630
                 circle_x_sort = sorted(circle_x, key=float)
@@ -251,6 +258,14 @@ class Image_Processing:
                     if diff_x2[i] < 630:
                         exit_flag += 2
                         break
+                if exit_flag != 0:
+                    print("---------------------")
+                    print("区间下移量：", num_down)
+                    print("退出标志为：", exit_flag)
+                    circle_x.clear()
+                    circle_y.clear()
+                    circle_r.clear()
+                    continue
 
                 #   标志3：检测定位点的灰度值均值，灰度均值误差大于20
                 if circle.shape[1] == 3:
@@ -327,13 +342,13 @@ class Image_Processing:
         exit_flag = 0
         dis_error = 0
         point_x = [0] * 5
-        point_y = [550, 850, 1200, 1530, 1870, 2200, 2550, 2880]
+        point_y = [450, 750, 1100, 1430, 1770, 2100, 2450, 2780]
         #   图像矫正后，获取Y轴参考点
-        y_arve = int(sum(circle_y) / 3) - 200
+        y_arve = int(sum(circle_y) / 3) - 100
         print("---------------------")
         print("参考点Y轴：", y_arve)
         #   获取参考点区间范围
-        ROI = img_dst[(y_arve):(y_arve + 400), 0:2500]
+        ROI = img_dst[(y_arve):(y_arve + 200), 0:2500]
         #   获取区间范围的定位点
         circle = cv.HoughCircles(ROI, cv.HOUGH_GRADIENT, 0.5, 400, param1=100, param2=8, minRadius=50, maxRadius=150)
         #   检测失败，直接返回
@@ -373,7 +388,7 @@ class Image_Processing:
         if flag == 1:
             for j in circle[0, :]:
                 cv.circle(img_gray, (int(j[0]), int(j[1] + y_arve)), int(j[2]), (0, 0, 0), 10)
-            cv.rectangle(img_gray, pt1=(0, (y_arve)), pt2=(2500, (y_arve + 400)), color=(0, 0, 0), thickness=20)
+            cv.rectangle(img_gray, pt1=(0, (y_arve)), pt2=(2500, (y_arve + 200)), color=(0, 0, 0), thickness=20)
 
         #   X轴定位点
         min_index, min_number = min(enumerate(cir_x), key=operator.itemgetter(1))
@@ -532,19 +547,26 @@ class Image_Processing:
         #   0 前期准备
         print("_______________________________________________")
         print("0    前期参数设置")
+        #   开始时间
+        start = time.perf_counter()
         #   参数设置
         gray_aver = np.zeros(reagent)  # 输出参数
         #   获取图像
         img_ori = self.img_read(path_read)
         #   保存原始灰度图像
         cv.imwrite(path_write + 'img_0ori.jpeg', img_ori)
-        cv.imwrite(path_write + 'img_final.jpeg', img_ori)
+        # cv.imwrite(path_write + 'img_final.jpeg', img_ori)
         #   获取环境的灰度值
         dst_init = self.__gray_round(img_ori)
         print("当前环境灰度值为：", self.gray_round)
+        #   结束时间
+        end = time.perf_counter()
+        print("0    时间消耗：%.2f s" % (end - start))
         #   1 检测定位点
         print("_______________________________________________")
         print("1    获取区域内的定位点")
+        #   开始时间
+        start = time.perf_counter()
         num_flag = 0
         while True:
             num_flag += 1  # 循环次数
@@ -563,24 +585,39 @@ class Image_Processing:
                 break
             elif judge == 0:
                 print("阈值为%03s" % dst_init + "\t" + "未检测到定位点")
-            if num_flag >= 10 or dst_init <= 70:
+            if num_flag >= 10:
                 cv.imwrite(path_write + 'img_final.jpeg', img_ori)
                 print("**错误：难以准确识别定位点")
                 return 0, gray_aver
             else:
                 continue
 
+        #   结束时间
+        end = time.perf_counter()
+        print("1    时间消耗：%.2f s" % (end - start))
         #   2.3 矫正图像角度
         print("_______________________________________________")
         print("2    初次矫正图像角度")
+        #   开始时间
+        start = time.perf_counter()
         img_rota, img_rota_dst, middle_index = self.img_correct_first(img_ori, img_dst, circle_x, circle_y)
+        #   结束时间
+        end = time.perf_counter()
+        print("2    时间消耗：%.2f s" % (end - start))
 
         print("_______________________________________________")
         print("3    再次矫正图像角度")
+        #   开始时间
+        start = time.perf_counter()
         point_x, point_y, dis_error = self.img_correct_second(img_rota, img_rota_dst, circle_x, circle_y, flag=1)
+        #   结束时间
+        end = time.perf_counter()
+        print("3    时间消耗：%.2f s" % (end - start))
 
         print("_______________________________________________")
         print("4    圈定试剂点")
+        #   开始时间
+        start = time.perf_counter()
         gray_aver, img_rota, judge_1 = self.img_get_gray(img_rota, gray_aver, point_x, point_y, dis_error, radius)
 
         font = cv.FONT_HERSHEY_SIMPLEX
@@ -593,6 +630,9 @@ class Image_Processing:
                               (255, 255, 255), 6)
 
         cv.imwrite(path_write + 'img_final.jpeg', img_rota)
+        #   结束时间
+        end = time.perf_counter()
+        print("4    时间消耗：%.2f s" % (end - start))
 
         return 1, gray_aver
 
@@ -602,5 +642,12 @@ if __name__ == '__main__':
         roi_position=roi_position
     )
 
-    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\2-1.jpeg', path_write='./img_out/',
+    #   开始时间
+    # start = time.perf_counter()
+
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\2-7.jpeg', path_write='./img_out/',
                    reagent=(8, 5), radius=40)
+
+    #   结束时间
+    # end = time.perf_counter()
+    # print("0    图像获取——完成——初始化参数  时间消耗：%.2f s" % (end - start))
