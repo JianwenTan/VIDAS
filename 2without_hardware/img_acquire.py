@@ -14,9 +14,9 @@ import time
 # ----------------------------------------------------------------------------#
 # 设备库
 # ----------------------------------------------------------------------------#
-import gxipy as gx
-import serial
-import serial.tools.list_ports
+# import gxipy as gx
+# import serial
+# import serial.tools.list_ports
 
 
 class Image_Acquire:
@@ -49,7 +49,7 @@ class Image_Acquire:
         #   开始时间
         start = time.perf_counter()
         print("1    图像获取——开始——获取图像")
-        img = cv2.imread(self.pathCa+"1.jpeg")
+        img = cv2.imread(self.pathCa + "1.jpeg")
         cv2.imwrite(self.pathSa + "%s.jpeg" % name, img)
         #   延时
         for _ in range(400000000):
