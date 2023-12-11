@@ -153,7 +153,7 @@ class Image_Processing:
         M = cv.getRotationMatrix2D(center, -90, 1.0)
         img_original = cv.warpAffine(img_original, M, (w, h))
         #   圈定图像获取区域
-        img_original = img_original[0:w, (h - 2500):h]
+        img_original = img_original[0:w, (h - 2300):h]
 
         return img_original
 

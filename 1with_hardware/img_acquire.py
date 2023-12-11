@@ -33,7 +33,8 @@ class Image_Acquire:
         self.Width_set = 1368  # 5496/4 = 1374
         self.Height_set = 1150  # 2300/2 = 1150
         self.OffsetX_set = [0, self.Width_set, self.Width_set * 2, self.Width_set * 3]
-        self.OffsetY_set = [200, self.Height_set + 200]
+        # self.OffsetY_set = [200, self.Height_set + 200]
+        self.OffsetY_set = [400, self.Height_set + 400]
         #   设置缓存图片路径
         self.img_path = [self.pathCa + 'img0.jpeg', self.pathCa + 'img1.jpeg',
                          self.pathCa + 'img2.jpeg', self.pathCa + 'img3.jpeg',
@@ -53,8 +54,8 @@ class Image_Acquire:
             print("可用的串口设备如下：")
             for comport in ports_list:
                 print(list(comport)[0], list(comport)[1])
-        # self.ser = serial.Serial("/dev/ttyUSB0", 9600)  # 打开COM17，将波特率配置为115200，其余参数使用默认值
-        self.ser = serial.Serial("COM9", 9600)  # 打开COM17，将波特率配置为115200，其余参数使用默认值
+        self.ser = serial.Serial("/dev/ttyUSB1", 9600)  # 打开COM17，将波特率配置为115200，其余参数使用默认值
+        # self.ser = serial.Serial("COM9", 9600)  # 打开COM17，将波特率配置为115200，其余参数使用默认值
 
     # ---------------------------------------------------#
     #   1 删除缓存图片
