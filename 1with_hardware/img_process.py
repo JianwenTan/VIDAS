@@ -139,6 +139,23 @@ class Image_Processing:
         point[4] = max
         return point
 
+    #   1.7 改变图像尺寸
+    def img_resize(self, img_path, img_name):
+        img = Image.open("%s" % img_path)
+        #   获取图像尺寸
+        width, height = img.size
+        #   创建画布
+        background = Image.new('L', (height, height))
+        #   设定位置
+        length = int((height - width) / 2)
+        #   放置图像
+        background.paste(img, (length, 1))
+        #   缩小图像
+        background = background.resize((350, 350))
+        #   保存图像
+        background.save("%s" % img_name)
+        return 0
+
     #   2.1 获取图像，并进行灰度化
     def img_read(self, path_read):
         '''
@@ -154,6 +171,7 @@ class Image_Processing:
         img_original = cv.warpAffine(img_original, M, (w, h))
         #   圈定图像获取区域
         img_original = img_original[0:w, (h - 2300):h]
+
 
         return img_original
 
@@ -555,6 +573,7 @@ class Image_Processing:
         img_ori = self.img_read(path_read)
         #   保存原始灰度图像
         cv.imwrite(path_write + 'img_0ori.jpeg', img_ori)
+        self.img_resize(path_write + 'img_0ori.jpeg', path_write +"img_show_ori.jpeg")
         # cv.imwrite(path_write + 'img_final.jpeg', img_ori)
         #   获取环境的灰度值
         dst_init = self.__gray_round(img_ori)
@@ -587,6 +606,7 @@ class Image_Processing:
                 print("阈值为%03s" % dst_init + "\t" + "未检测到定位点")
             if num_flag >= 10:
                 cv.imwrite(path_write + 'img_final.jpeg', img_ori)
+                self.img_resize(path_write + 'img_final.jpeg', path_write +"img_show_final.jpeg")
                 print("**错误：难以准确识别定位点")
                 return 0, gray_aver
             else:
@@ -630,6 +650,7 @@ class Image_Processing:
                               (255, 255, 255), 6)
 
         cv.imwrite(path_write + 'img_final.jpeg', img_rota)
+        self.img_resize(path_write + 'img_final.jpeg', path_write +"img_show_final.jpeg")
         #   结束时间
         end = time.perf_counter()
         print("4    时间消耗：%.2f s" % (end - start))
