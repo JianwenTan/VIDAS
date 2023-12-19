@@ -539,8 +539,8 @@ class Image_Processing:
         #   获取图像
         img_ori = self.img_read(path_read)
         #   保存原始灰度图像
-        cv.imwrite(path_write + 'img_0ori.jpeg', img_ori)
-        cv.imwrite(path_write + 'img_final.jpeg', img_ori)
+        # cv.imwrite(path_write + 'img_0ori.jpeg', img_ori)
+        # cv.imwrite(path_write + 'img_final.jpeg', img_ori)
         #   获取环境的灰度值
         dst_init = self.__gray_round(img_ori)
         print("当前环境灰度值为：", self.gray_round)
@@ -572,7 +572,7 @@ class Image_Processing:
             elif judge == 0:
                 print("阈值为%03s" % dst_init + "\t" + "未检测到定位点")
             elif num_flag >= 10:
-                cv.imwrite(path_write + 'img_final.jpeg', img_ori)
+                # cv.imwrite(path_write + 'img_final.jpeg', img_ori)
                 print("**错误：难以准确识别定位点")
                 return 0, gray_aver
             else:
@@ -623,7 +623,7 @@ class Image_Processing:
                               6)
         img_rota = cv.putText(img_rota, "Gray_Surrounding: %.3f" % (self.gray_round), (50, 510), font, 3,
                               (255, 255, 255), 6)
-        cv.imwrite(path_write + 'img_final.jpeg', img_rota)
+        # cv.imwrite(path_write + 'img_final.jpeg', img_rota)
         #   结束时间
         end = time.perf_counter()
         print("7    结束——圈定试剂点  时间消耗：%.2f s" % (end - start))
