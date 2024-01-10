@@ -637,5 +637,5 @@ if __name__ == '__main__':
         roi_position=roi_position
     )
 
-    imgPro.process(path_read='picture/2-1.jpeg', path_write='./img_out/', reagent=(8, 5),
+    imgPro.process(path_read='picture/2-1.jpeg', path_write='./img_out/', reagent=(9, 5),
                    radius=40)

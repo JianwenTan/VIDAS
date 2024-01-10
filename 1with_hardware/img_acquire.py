@@ -128,6 +128,7 @@ class Image_Acquire:
                 write_len = self.ser.write("$810011C".encode('utf-8'))
                 break
             elif flag > 8:
+                write_len = self.ser.write("$810011C".encode('utf-8'))
                 flag = 0
 
     # ---------------------------------------------------#

@@ -418,8 +418,8 @@ class Image_Processing:
                 continue
             else:
                 middle_index = i
-        cir_out_x = [cir_x[min_index], 0, cir_x[middle_index], 0, cir_x[max_index]]
-        cir_out_y = [cir_y[min_index], 0, cir_y[middle_index], 0, cir_y[max_index]]
+        cir_out_x = [cir_x[min_index], cir_x[middle_index], cir_x[max_index]]
+        cir_out_y = [cir_y[min_index], cir_y[middle_index], cir_y[max_index]]
         #   底部试剂点位置
         y_down = 2900
         #   底部左边试剂点位置
@@ -555,10 +555,15 @@ class Image_Processing:
     def img_get_gray(self, img_rota, gray_aver, circle_x, circle_y, point_x, point_y, dis_error, radius):
         #   获取试剂点的灰度值
         img_array = np.transpose(np.array(img_rota))
-        for i in range(0,5,2):
-            print(circle_x[i], circle_y[i])
+        print("定位点X轴：", circle_x)
+        print("定位点X轴：", circle_y)
+        for i in range(3):
+            print("定位点:", i+1, circle_x[i], circle_y[i])
             cv.circle(img_rota, (int(circle_x[i]), int(circle_y[i])), radius, (0, 0, 0), 10)
             gray_aver[0][i] = self.__sum_gray(img_array, int(circle_x[i]), int(circle_y[i]), radius)
+        gray_aver[0][4] = gray_aver[0][2]
+        gray_aver[0][2] = gray_aver[0][1]
+        gray_aver[0][1] = 0
         for i in range(5):
             for j in range(8):
                 cv.circle(img_rota, (int(point_x[i] + j * (dis_error / 8)), point_y[j]), radius, (0, 0, 0), 10)
@@ -676,9 +681,9 @@ if __name__ == '__main__':
     #   开始时间
     # start = time.perf_counter()
 
-    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\1.jpeg', path_write='./img_out/',
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.2Time2023-12-28\\2023_12_28_16_23_46.jpeg',
+                   path_write='./img_out/',
                    reagent=(8 + 1, 5), radius=40)
-
     #   结束时间
     # end = time.perf_counter()
     # print("0    图像获取——完成——初始化参数  时间消耗：%.2f s" % (end - start))
