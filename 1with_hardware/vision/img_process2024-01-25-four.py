@@ -132,12 +132,12 @@ class Image_Processing:
         return num
 
     #   1.6 输出试剂点X轴坐标
-    def __point_X(self, min, mid, max):
+    def __point_X(self, min, max):
         point = [0] * 5
         point[0] = min
-        point[1] = min + (mid - min) / 2
-        point[2] = mid
-        point[3] = max - (max - mid) / 2
+        point[1] = min + (max - min) / 4
+        point[2] = min + (max - min) / 4 * 2
+        point[3] = min + (max - min) / 4 * 3
         point[4] = max
         return point
 
@@ -172,37 +172,20 @@ class Image_Processing:
 
     #   1.9 过敏原性质判定
     def nature_positive_negative(self, g_arr, n_arr, comb):
-        #   删除矩阵第一行数据
-        g_arr = np.delete(g_arr, 0, axis=0)
-        if comb == "检测组合A" or comb == "检测组合B" or comb == "检测组合C":
-            for i in range(8):
-                for j in range(5):
-                    if (i % 2 == 0 and j % 2 == 0) or (i % 2 == 1 and j % 2 == 1):
-                        if g_arr[i][j] < 60000:
-                            n_arr[i][j] = "阴性"
-                        elif g_arr[i][j] < 660000:
-                            n_arr[i][j] = "弱阳性"
-                        elif g_arr[i][j] < 1100000:
-                            n_arr[i][j] = "中阳性"
-                        elif g_arr[i][j] > 1100000:
-                            n_arr[i][j] = "强阳性"
-                        else:
-                            n_arr[i][j] = "error"
-        elif comb == "检测组合D":
-            for i in range(8):
-                for j in range(5):
-                    if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
-                        if g_arr[i][j] < 60000:
-                            n_arr[i][j] = "阴性"
-                        elif g_arr[i][j] < 660000:
-                            n_arr[i][j] = "弱阳性"
-                        elif g_arr[i][j] < 1100000:
-                            n_arr[i][j] = "中阳性"
-                        elif g_arr[i][j] > 1100000:
-                            n_arr[i][j] = "强阳性"
-                        else:
-                            n_arr[i][j] = "error"
-                    print(g_arr[0][1])
+        #   判断发光值的性质
+        for i in range(9):
+            for j in range(5):
+                if i > 0 or j == 2:
+                    if g_arr[i][j] < 60000:
+                        n_arr[i][j] = "阴性"
+                    elif g_arr[i][j] < 660000:
+                        n_arr[i][j] = "弱阳性"
+                    elif g_arr[i][j] < 1100000:
+                        n_arr[i][j] = "中阳性"
+                    elif g_arr[i][j] > 1100000:
+                        n_arr[i][j] = "强阳性"
+                    else:
+                        n_arr[i][j] = "error"
         return n_arr
 
     #   2.1 获取图像，并进行灰度化
@@ -230,9 +213,16 @@ class Image_Processing:
                 output： 二值化图像
                 '''
         #   二值化图像
+        mask = np.zeros(img.shape, dtype='uint8')
+        white = (255, 255, 255)
+        cv.rectangle(mask, (0, 0), (int(img.shape[1] / 2) - 350, img.shape[0]), white, -1)
+        cv.rectangle(mask, (int(img.shape[1] / 2) + 350, 0), (img.shape[1], img.shape[0]), white, -1)
+
         ret, img_thres = cv.threshold(img, dat_num, 255, cv.THRESH_BINARY)
 
-        return img_thres
+        Masked = cv.bitwise_and(img_thres, mask)
+
+        return Masked
 
     #   2.3 图像腐蚀
     def img_erosion(self, img, num_erosion):
@@ -284,10 +274,9 @@ class Image_Processing:
             #   当前ROI未找到定位点
             if circle is None:
                 continue
-            elif circle.shape[1] < 3:
+            elif circle.shape[1] < 2:
                 continue
-            #   当前ROI找到全部定位点
-            elif circle.shape[1] >= 3:
+            elif circle.shape[1] >= 2:
                 #   定位点坐标+ROI定位区间
                 for i in range(circle.shape[1]):
                     circle[0][i][0] = circle[0][i][0] + self.__roiPos[1][0]
@@ -298,20 +287,13 @@ class Image_Processing:
                     circle_y.append(j[1])
                     circle_r.append(j[2])
 
-                #   退出标志为0
-                exit_flag = 0
-
-                #  标志1：检测定位点Y轴，像素误差大于200
+                #  标志1：检测定位点Y轴，像素误差小于200，通过
                 circle_y_sort = sorted(circle_y, key=float)
                 diff_x1 = np.diff(circle_y_sort)
-                for i in range(len(diff_x1)):
-                    if diff_x1[i] > 200:
-                        exit_flag += 1
-                        break
-                if exit_flag != 0:
+                if diff_x1[0] > 200:
                     print("---------------------")
                     print("区间下移量：", num_down)
-                    print("退出标志为：", exit_flag)
+                    print("退出标志为：定位点Y轴上不一致")
                     circle_x.clear()
                     circle_y.clear()
                     circle_r.clear()
@@ -320,60 +302,54 @@ class Image_Processing:
                 #   标志2：检测定位点X轴，像素误差小于630
                 circle_x_sort = sorted(circle_x, key=float)
                 diff_x2 = np.diff(circle_x_sort)
-                for i in range(len(diff_x2)):
-                    if diff_x2[i] < 630:
-                        exit_flag += 2
-                        break
-                if exit_flag != 0:
+                if diff_x2[0] < 1260:
                     print("---------------------")
                     print("区间下移量：", num_down)
-                    print("退出标志为：", exit_flag)
+                    print("退出标志为：定位点X轴上不一致")
                     circle_x.clear()
                     circle_y.clear()
                     circle_r.clear()
                     continue
 
                 #   标志3：检测定位点的灰度值均值，灰度均值误差大于20
-                if circle.shape[1] == 3:
-                    gray_posi = np.zeros(1 * 3)
+                if circle.shape[1] == 2:
+                    gray_posi = np.zeros(1 * 2)
                     img_array = np.transpose(np.array(img_gray))
-                    for j in range(3):
+                    for j in range(2):
                         gray_posi[j] = self.__sum_gray_ave(img_array, int(circle_x[j]), int(circle_y[j]),
                                                            int(circle_r[j]))
                     min_index, min_number = min(enumerate(gray_posi), key=operator.itemgetter(1))
                     max_index, max_number = max(enumerate(gray_posi), key=operator.itemgetter(1))
-                    if (max_number - min_number) >= 20:
-                        exit_flag += 4
+                    if (max_number - min_number) >= 50:
+                        print("---------------------")
+                        print("区间下移量：", num_down)
+                        print("退出标志为：灰度值不一致")
+                        circle_x.clear()
+                        circle_y.clear()
+                        circle_r.clear()
+                        continue
                 else:
                     gray_posi = np.zeros(1 * circle.shape[1])
-                    exit_flag += 4
-
-                if exit_flag != 0:
-                    print("---------------------")
-                    print("区间下移量：", num_down)
-                    print("退出标志为：", exit_flag)
-                    circle_x.clear()
-                    circle_y.clear()
-                    circle_r.clear()
                     continue
-                else:
-                    self.gray_down = num_down
-                    print("---------------------")
-                    print("* 初次获取定位点")
-                    print("区间下移量：", num_down)
-                    print("定位点X轴坐标：", circle_x)
-                    print("定位点X轴差值：", diff_x2)
-                    print("定位点Y轴坐标：", circle_y)
-                    print("定位点直径：", circle_r)
-                    print("定位点灰度值：", gray_posi)
-                    if flag == 1:
-                        # 圈定ROI区域
-                        cv.rectangle(img_gray, pt1=(self.__roiPos[1][0], self.__roiPos[0][0] + num_down),
-                                     pt2=(self.__roiPos[1][1], self.__roiPos[0][1] + num_down), color=(0, 0, 0),
-                                     thickness=20)
-                        for j in circle[0, :]:
-                            cv.circle(img_gray, (int(j[0]), int(j[1])), int(j[2]), (0, 0, 0), 10)
-                    return 1, img_gray, circle, circle_x, circle_y
+
+                self.gray_down = num_down
+                print("---------------------")
+                print("* 初次获取定位点")
+                print("区间下移量：", num_down)
+                print("定位点X轴坐标：", circle_x)
+                print("定位点X轴差值：", diff_x2)
+                print("定位点Y轴坐标：", circle_y)
+                print("定位点直径：", circle_r)
+                print("定位点灰度值：", gray_posi)
+                if flag == 1:
+                    # 圈定ROI区域
+                    cv.rectangle(img_gray, pt1=(self.__roiPos[1][0], self.__roiPos[0][0] + num_down),
+                                 pt2=(self.__roiPos[1][1], self.__roiPos[0][1] + num_down), color=(0, 0, 0),
+                                 thickness=20)
+                    for j in circle[0, :]:
+                        cv.circle(img_gray, (int(j[0]), int(j[1])), int(j[2]), (0, 0, 0), 10)
+                return 1, img_gray, circle, circle_x, circle_y
+
         # 未找到定位点
         return 0, img_gray, 0, 0, 0
 
@@ -381,12 +357,6 @@ class Image_Processing:
     def img_correct_first(self, img_gray, img_dst, circle_x, circle_y):
         min_index, min_number = min(enumerate(circle_x), key=operator.itemgetter(1))
         max_index, max_number = max(enumerate(circle_x), key=operator.itemgetter(1))
-        middle_index = None
-        for i in range(3):
-            if i == min_index or i == max_index:
-                continue
-            else:
-                middle_index = i
 
         #   计算直线上的垂足点与中间点的角度，然后根据角度旋转图像
         angle = math.atan2(circle_y[max_index] - circle_y[min_index], circle_x[max_index] - circle_x[min_index])
@@ -398,7 +368,7 @@ class Image_Processing:
         img_rota = self.__rotate_img(img_gray, angle)
         img_rota_dst = self.__rotate_img(img_dst, angle)
 
-        return img_rota, img_rota_dst, middle_index
+        return img_rota, img_rota_dst
 
     #   3.3 验证定位点
     def img_correct_second(self, img_gray, img_dst, circle_x, circle_y, flag):
@@ -412,7 +382,7 @@ class Image_Processing:
         point_x = [0] * 5
         point_y = [450, 750, 1100, 1430, 1770, 2100, 2450, 2780]
         #   图像矫正后，获取Y轴参考点
-        y_arve = int(sum(circle_y) / 3) - 100
+        y_arve = int(sum(circle_y) / 2) - 100
         print("---------------------")
         print("参考点Y轴：", y_arve)
         #   获取参考点区间范围
@@ -420,17 +390,11 @@ class Image_Processing:
         #   获取区间范围的定位点
         circle = cv.HoughCircles(ROI, cv.HOUGH_GRADIENT, 0.5, 400, param1=100, param2=8, minRadius=50, maxRadius=150)
         #   检测失败，直接返回
-        if (circle is None) or (circle.shape[1] < 3):
+        if (circle is None) or (circle.shape[1] < 2):
             min_in, min_num = min(enumerate(circle_x), key=operator.itemgetter(1))
             max_in, max_num = max(enumerate(circle_x), key=operator.itemgetter(1))
-            middle_index = None
-            for i in range(3):
-                if i == min_in or i == max_in:
-                    continue
-                else:
-                    middle_index = i
             #   输出X轴坐标
-            point_x = self.__point_X(min_num, circle_x[middle_index], max_num)
+            point_x = self.__point_X(min_num, max_num)
             print("试剂点X轴坐标：", point_x)
             #   输出Y轴坐标
             for i in range(8):
@@ -445,11 +409,11 @@ class Image_Processing:
         print("矫正后定位点Y轴坐标：", cir_y)
         print("矫正后定位点直径：", cir_r)
         #   定位点灰度均值
-        gray_posi = [0] * 3
+        gray_posi = [0] * 2
         img_array = np.transpose(np.array(img_gray))
-        for j in range(3):
+        for j in range(2):
             gray_posi[j] = self.__sum_gray_ave(img_array, int(cir_x[j]), int(cir_y[j]), int(cir_r[j]))
-        gray_ave = int((sum(gray_posi) / 3) * 100) / 100 - 20
+        gray_ave = int((sum(gray_posi) / 2) * 100) / 100 - 20
         print("定位点灰度均值判读阈值：", gray_ave)
 
         #   画图
@@ -457,18 +421,13 @@ class Image_Processing:
             for j in circle[0, :]:
                 cv.circle(img_gray, (int(j[0]), int(j[1] + y_arve)), int(j[2]), (0, 0, 0), 10)
             cv.rectangle(img_gray, pt1=(0, (y_arve)), pt2=(2500, (y_arve + 200)), color=(0, 0, 0), thickness=20)
+        # cv.imwrite('img_0ori.jpeg', img_gray)
 
         #   X轴定位点
         min_index, min_number = min(enumerate(cir_x), key=operator.itemgetter(1))
         max_index, max_number = max(enumerate(cir_x), key=operator.itemgetter(1))
-        middle_index = None
-        for i in range(3):
-            if i == min_index or i == max_index:
-                continue
-            else:
-                middle_index = i
-        cir_out_x = [cir_x[min_index], cir_x[middle_index], cir_x[max_index]]
-        cir_out_y = [cir_y[min_index], cir_y[middle_index], cir_y[max_index]]
+        cir_out_x = [cir_x[min_index], cir_x[max_index]]
+        cir_out_y = [cir_y[min_index], cir_y[max_index]]
         #   底部试剂点位置
         y_down = 2900
         #   底部左边试剂点位置
@@ -539,10 +498,10 @@ class Image_Processing:
             dis_error = ((x_min - min_number) + (x_max - max_number)) / 2
             print("试剂点X轴坐标误差值：", dis_error)
             #   输出X轴坐标
-            point_x = self.__point_X(min_number, cir_x[middle_index], max_number)
+            point_x = self.__point_X(min_number, max_number)
             print("试剂点X轴坐标：", point_x)
             #   输出Y轴坐标
-            y_arve_new = sum(cir_y) / 3
+            y_arve_new = sum(cir_y) / 2
             y_down_ave = (y_max + y_min) / 2
             for i in range(8):
                 point_y[i] = int(y_arve_new + (i + 1) * (y_down_ave - y_arve_new) / 8)
@@ -559,10 +518,10 @@ class Image_Processing:
             dis_error = x_min - min_number
             print("试剂点X轴坐标误差值：", dis_error)
             #   输出X轴坐标
-            point_x = self.__point_X(min_number, cir_x[middle_index], max_number)
+            point_x = self.__point_X(min_number, max_number)
             print("试剂点X轴坐标：", point_x)
             #   输出Y轴坐标
-            y_arve_new = sum(cir_y) / 3
+            y_arve_new = sum(cir_y) / 2
             y_down_ave = y_min
             for i in range(8):
                 point_y[i] = int(y_arve_new + (i + 1) * (y_down_ave - y_arve_new) / 8)
@@ -579,10 +538,10 @@ class Image_Processing:
             dis_error = x_max - max_number
             print("试剂点X轴坐标误差值：", dis_error)
             #   输出X轴坐标
-            point_x = self.__point_X(min_number, cir_x[middle_index], max_number)
+            point_x = self.__point_X(min_number, max_number)
             print("试剂点X轴坐标：", point_x)
             #   输出Y轴坐标
-            y_arve_new = sum(cir_y) / 3
+            y_arve_new = sum(cir_y) / 2
             y_down_ave = y_max
             for i in range(8):
                 point_y[i] = int(y_arve_new + (i + 1) * (y_down_ave - y_arve_new) / 8)
@@ -592,7 +551,7 @@ class Image_Processing:
         #   底部定位点均不存在
         else:
             #   输出X轴坐标
-            point_x = self.__point_X(min_number, cir_x[middle_index], max_number)
+            point_x = self.__point_X(min_number, max_number)
             print("试剂点X轴坐标：", point_x)
             #   输出Y轴坐标
             for i in range(8):
@@ -608,12 +567,15 @@ class Image_Processing:
         print("定位点X轴：", circle_x)
         print("定位点X轴：", circle_y)
         #   获取定位点的灰度值
-        for i in range(3):
+        for i in range(2):
             print("定位点:", i + 1, circle_x[i], circle_y[i])
             cv.circle(img_rota, (int(circle_x[i]), int(circle_y[i])), radius, (0, 0, 0), 10)
             gray_aver[0][i] = self.__sum_gray(img_array, int(circle_x[i]), int(circle_y[i]), radius)
-        gray_aver[0][4] = gray_aver[0][2]
-        gray_aver[0][2] = gray_aver[0][1]
+        cv.circle(img_rota, (int((circle_x[1] + circle_x[0]) / 2), int((circle_y[1] + circle_y[0]) / 2)), radius,
+                  (0, 0, 0), 10)
+        gray_aver[0][2] = self.__sum_gray(img_array, int((circle_x[1] + circle_x[0]) / 2),
+                                          int((circle_y[1] + circle_y[0]) / 2), radius)
+        gray_aver[0][4] = gray_aver[0][1]
         gray_aver[0][1] = 0
         #   获取试剂点的灰度值
         for i in range(5):
@@ -639,13 +601,12 @@ class Image_Processing:
         start = time.perf_counter()
         #   参数设置
         gray_aver = np.zeros((9, 5), dtype=int)  # 输出参数
-        nature_aver = np.zeros((8, 5), dtype=int)
+        nature_aver = np.zeros((9, 5), dtype=int)
         nature_aver = nature_aver.astype(str)
         #   获取图像
         img_ori = self.img_read(path_read)
         #   保存原始灰度图像
         cv.imwrite(path_write + 'img_0ori.jpeg', img_ori)
-        self.img_resize(path_write + 'img_0ori.jpeg', path_write + "img_show_ori.jpeg")
         # cv.imwrite(path_write + 'img_final.jpeg', img_ori)
         #   获取环境的灰度值
         dst_init = self.__gray_round(img_ori)
@@ -680,7 +641,7 @@ class Image_Processing:
                 cv.imwrite(path_write + 'img_final.jpeg', img_ori)
                 self.img_resize(path_write + 'img_final.jpeg', path_write + "img_show_final.jpeg")
                 print("**错误：难以准确识别定位点")
-                return 0, gray_aver
+                return 0, gray_aver, nature_aver
             else:
                 continue
 
@@ -692,10 +653,7 @@ class Image_Processing:
         print("2    初次矫正图像角度")
         #   开始时间
         start = time.perf_counter()
-        img_rota, img_rota_dst, middle_index = self.img_correct_first(img_ori, img_dst, circle_x, circle_y)
-        cv.imwrite(path_write + 'img_1.jpeg', img_rota)
-
-        cv.imwrite(path_write + 'img_2.jpeg', img_rota_dst)
+        img_rota, img_rota_dst = self.img_correct_first(img_ori, img_dst, circle_x, circle_y)
         #   结束时间
         end = time.perf_counter()
         print("2    时间消耗：%.2f s" % (end - start))
@@ -728,7 +686,6 @@ class Image_Processing:
                               (255, 255, 255), 6)
 
         cv.imwrite(path_write + 'img_final.jpeg', img_rota)
-        self.img_resize(path_write + 'img_final.jpeg', path_write + "img_show_final.jpeg")
         #   结束时间
         end = time.perf_counter()
         print("4    时间消耗：%.2f s" % (end - start))
@@ -747,7 +704,8 @@ if __name__ == '__main__':
     #   开始时间
     # start = time.perf_counter()
 
-    imgPro.process(path_read='picture/2-2.jpeg', path_write='./img_out/', combina="检测组合A", radius=40)
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.4Time2024-01-22\\2.jpeg',
+                   path_write='./img_out/', combina="检测组合A", radius=40)
     #   结束时间
     # end = time.perf_counter()
     # print("0    图像获取——完成——初始化参数  时间消耗：%.2f s" % (end - start))

@@ -173,36 +173,20 @@ class Image_Processing:
     #   1.9 过敏原性质判定
     def nature_positive_negative(self, g_arr, n_arr, comb):
         #   删除矩阵第一行数据
-        g_arr = np.delete(g_arr, 0, axis=0)
-        if comb == "检测组合A" or comb == "检测组合B" or comb == "检测组合C":
-            for i in range(8):
-                for j in range(5):
-                    if (i % 2 == 0 and j % 2 == 0) or (i % 2 == 1 and j % 2 == 1):
-                        if g_arr[i][j] < 60000:
-                            n_arr[i][j] = "阴性"
-                        elif g_arr[i][j] < 660000:
-                            n_arr[i][j] = "弱阳性"
-                        elif g_arr[i][j] < 1100000:
-                            n_arr[i][j] = "中阳性"
-                        elif g_arr[i][j] > 1100000:
-                            n_arr[i][j] = "强阳性"
-                        else:
-                            n_arr[i][j] = "error"
-        elif comb=="检测组合D" :
-            for i in range(8):
-                for j in range(5):
-                    if (i%2 ==0 and j%2==1) or (i%2==1 and j%2==0):
-                        if g_arr[i][j] < 60000:
-                            n_arr[i][j] = "阴性"
-                        elif g_arr[i][j] < 660000:
-                            n_arr[i][j] = "弱阳性"
-                        elif g_arr[i][j] < 1100000:
-                            n_arr[i][j] = "中阳性"
-                        elif g_arr[i][j] > 1100000:
-                            n_arr[i][j] = "强阳性"
-                        else:
-                            n_arr[i][j] = "error"
-                    print(g_arr[0][1])
+        # g_arr = np.delete(g_arr, 0, axis=0)
+        for i in range(9):
+            for j in range(5):
+                if i > 0 or j == 2:
+                    if g_arr[i][j] < 60000:
+                        n_arr[i][j] = "阴性"
+                    elif g_arr[i][j] < 660000:
+                        n_arr[i][j] = "弱阳性"
+                    elif g_arr[i][j] < 1100000:
+                        n_arr[i][j] = "中阳性"
+                    elif g_arr[i][j] > 1100000:
+                        n_arr[i][j] = "强阳性"
+                    else:
+                        n_arr[i][j] = "error"
         return n_arr
 
     #   2.1 获取图像，并进行灰度化
@@ -639,7 +623,7 @@ class Image_Processing:
         start = time.perf_counter()
         #   参数设置
         gray_aver = np.zeros((9, 5), dtype=int)  # 输出参数
-        nature_aver = np.zeros((8, 5), dtype=int)
+        nature_aver = np.zeros((9, 5), dtype=int)
         nature_aver = nature_aver.astype(str)
         #   获取图像
         img_ori = self.img_read(path_read)
@@ -680,7 +664,7 @@ class Image_Processing:
                 cv.imwrite(path_write + 'img_final.jpeg', img_ori)
                 self.img_resize(path_write + 'img_final.jpeg', path_write + "img_show_final.jpeg")
                 print("**错误：难以准确识别定位点")
-                return 0, gray_aver
+                return 0, gray_aver, nature_aver
             else:
                 continue
 

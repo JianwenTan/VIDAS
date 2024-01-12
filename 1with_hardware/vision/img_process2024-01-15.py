@@ -188,10 +188,10 @@ class Image_Processing:
                             n_arr[i][j] = "强阳性"
                         else:
                             n_arr[i][j] = "error"
-        elif comb == "检测组合D":
+        elif comb=="检测组合D" :
             for i in range(8):
                 for j in range(5):
-                    if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
+                    if (i%2 ==0 and j%2==1) or (i%2==1 and j%2==0):
                         if g_arr[i][j] < 60000:
                             n_arr[i][j] = "阴性"
                         elif g_arr[i][j] < 660000:
@@ -214,12 +214,12 @@ class Image_Processing:
         #   读取原始图像，并灰度化
         img_original = cv.cvtColor(cv.imread(path_read), cv.COLOR_RGB2GRAY)
         #   顺时针旋转90度
-        # (w, h) = img_original.shape[:2]
-        # center = (w // 2, h // 2)
-        # M = cv.getRotationMatrix2D(center, -90, 1.0)
-        # img_original = cv.warpAffine(img_original, M, (w, h))
-        # #   圈定图像获取区域
-        # img_original = img_original[0:w, (h - 2300):h]
+        (w, h) = img_original.shape[:2]
+        center = (w // 2, h // 2)
+        M = cv.getRotationMatrix2D(center, -90, 1.0)
+        img_original = cv.warpAffine(img_original, M, (w, h))
+        #   圈定图像获取区域
+        img_original = img_original[0:w, (h - 2300):h]
 
         return img_original
 
@@ -693,9 +693,6 @@ class Image_Processing:
         #   开始时间
         start = time.perf_counter()
         img_rota, img_rota_dst, middle_index = self.img_correct_first(img_ori, img_dst, circle_x, circle_y)
-        cv.imwrite(path_write + 'img_1.jpeg', img_rota)
-
-        cv.imwrite(path_write + 'img_2.jpeg', img_rota_dst)
         #   结束时间
         end = time.perf_counter()
         print("2    时间消耗：%.2f s" % (end - start))
@@ -747,7 +744,8 @@ if __name__ == '__main__':
     #   开始时间
     # start = time.perf_counter()
 
-    imgPro.process(path_read='picture/2-2.jpeg', path_write='./img_out/', combina="检测组合A", radius=40)
+    imgPro.process(path_read='D:\\WorkSpace\\VIDAS\\0pic_datasheet\\V2.0now\\1.jpeg',
+                   path_write='./img_out/', combina="检测组合A", radius=40)
     #   结束时间
     # end = time.perf_counter()
     # print("0    图像获取——完成——初始化参数  时间消耗：%.2f s" % (end - start))
