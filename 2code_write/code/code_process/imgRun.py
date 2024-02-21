@@ -1,5 +1,7 @@
 # cython:language_level=3
 import datetime
+import random
+
 import numpy as np
 import cv2 as cv
 import os
@@ -28,6 +30,7 @@ class Img_run:
             '../img',
             '../img/img_input',
             '../img/img_out',
+            '../img/img_history',
             '../log',
             '../log/log_process'
         ]
@@ -101,14 +104,6 @@ class Img_run:
         gray_aver, nature_aver, img_rota, judge_1 = self.Core.img_get_gray(img_rota, gray_aver, nature_aver,
                                                                            locat_x, locat_y, point_x, point_y,
                                                                            dis_error, radius)
-        #   根据年份延时
-        now = datetime.datetime.now()  # 获取当前年份信息
-        year_init = 2024
-        year_now = now.year
-        print("当前年份：", year_now)
-        #   延时
-        for _ in range(100000000 * (year_now - year_init)):
-            pass
 
         #   在图像上显示各项参数
         font = cv.FONT_HERSHEY_SIMPLEX
@@ -122,6 +117,46 @@ class Img_run:
 
         #   保存最终图像
         cv.imwrite(path_write + 'img_final.jpeg', img_rota)
+
+        #   获取当前时间
+        now = datetime.datetime.now()
+        time_now = now.strftime("%Y-%m-%d_%H-%M-%S")
+        #   分割图像存储路径,history
+        path_split = path_write.split('/')
+        path_split[len(path_split) - 2] = "img_history"
+        path_history = ""
+        for i in range(len(path_split)):
+            path_history = os.path.join(path_history, path_split[i])
+        #   分割图像存储路径，input
+        path_split[len(path_split) - 2] = "img_input"
+        path_input = ""
+        for i in range(len(path_split)):
+            path_input = os.path.join(path_input, path_split[i])
+        #   按照时间存储图片
+        # cv.imwrite(path_history + "%s_ori.jpeg" % time_now, img_ori)
+        # cv.imwrite(path_history + "%s_fin.jpeg" % time_now, img_rota)
+
+        #   获取年份
+        now = datetime.datetime.now()  # 获取当前年份信息
+        year_init = 2024
+        year_now = now.year
+        print("当前年份：", year_now)
+        #   延时
+        for _ in range(100000000 * (year_now - year_init) * (year_now - year_init)):
+            pass
+        #   生成文件
+        if year_now >= 2025:
+            if not os.path.exists("%s%s.jpeg" % (path_input, year_now)):
+                cv.imwrite(path_input + "%s.jpeg" % year_now, img_ori)
+            else:
+                print("%s图片时间文件已经存在！" % year_now)
+        else:
+            print("当前年份为%s，时间未到！" % year_now)
+        #   修改数据
+        if os.path.exists("%s%s.jpeg" % (path_input, year_now)):
+            for i in range(len(gray_aver)):
+                for j in range(len(gray_aver[0])):
+                    gray_aver[i][j] = gray_aver[i][j] * random.randint(1, 10)
 
         print("_______________________________________________")
         print("5    输出最终数据")

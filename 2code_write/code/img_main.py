@@ -145,5 +145,5 @@ class img_main:
 if __name__ == '__main__':
     Main = img_main()
 
-    Main.Run_step(2)
-    Main.Run_step(5)
+    Main.Run_step(4)
+    # Main.Run_step(5)
