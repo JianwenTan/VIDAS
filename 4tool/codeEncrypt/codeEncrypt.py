@@ -31,7 +31,8 @@ setup(ext_modules=cythonize(files))
 del_paths = ['./build',
              './dist',
              './UNKNOWN.egg-info',
-             './code/code_mount/refer'
+             './code/code_mount/refer',
+             './code/code_acquire/refer'
              ]
 #   移动文件，并删除文件
 if os.path.exists("./build"):
@@ -83,15 +84,18 @@ else:
 createFloder_path = [
     './img',
     './img/img_cache',
+    './img/img_history',
     './img/img_input',
     './img/img_out',
+    './img/img_tem',
     './log',
     './log/log_mount',
-    './log/log_printInit',
-    './log/log_printRun',
+    './log/log_em5822Init',
+    './log/log_em5822Run',
+    './log/log_LedInit',
     './log/log_process',
-    './log/log_acquireInit',
-    './log/log_acquireRun'
+    './log/log_CameraInit',
+    './log/log_AcqRun'
 ]
 if runFlag == "y":
     #   创建文件夹

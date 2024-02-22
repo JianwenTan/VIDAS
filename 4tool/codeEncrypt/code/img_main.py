@@ -4,11 +4,12 @@ import datetime
 
 sys.path.append("code_process")
 sys.path.append("code_acquire")
-sys.path.append("code_print")
+sys.path.append("code_em5822")
 sys.path.append("code_mount")
 
 from code_process import imgRun
-from code_print import Em5822
+from code_acquire import acqRun
+from code_em5822 import Em5822
 from code_mount import mount
 
 
@@ -17,6 +18,7 @@ class img_main:
     #   初始化
     def __init__(self):
         self.Pro = imgRun.Img_run()
+        self.Acq = acqRun.Acq_Run()
         self.Pri = Em5822.Em5822_out()
         self.Move = mount.Mount_move()
 
@@ -25,8 +27,13 @@ class img_main:
         flag, gray, nature = self.Pro.process_log(path_read=read, path_write=write, combina=combina, radius=radius)
         return flag, gray, nature
 
-    #   图像获取初始化
-    def imgAcquire_init(self):
+    #   图像获取-灯源控制器初始化
+    def imgLed_init(self):
+        flag = self.Acq.Led_init_log()
+        return flag
+
+    #   图像获取-摄像头初始化
+    def imgCamera_init(self):
         pass
 
     #   图像获取全流程
@@ -40,7 +47,7 @@ class img_main:
 
     #   热转印打印
     def natPrint(self, Base, Nature, Data_Light):
-        flag = self.Pri.em5822_print_log(Base, Nature, Data_Light)
+        flag = self.Pri.em5822_out_log(Base, Nature, Data_Light)
         return flag
 
     #   挂载移动文件
@@ -51,37 +58,47 @@ class img_main:
     #   步骤执行
     def Run_step(self, num):
         # -----------------------------------------------------------------------------------#
-        #   步骤： 1   图像获取初始化
+        #   步骤： 1   图像获取-灯源控制器初始化
         #
         #   标志：
         # -----------------------------------------------------------------------------------#
         if num == 1:
+            print("————————————————————————————————————————————————")
+            Led_Init_flag = Main.imgLed_init()  # 灯源控制器初始化
+            print("灯源控制器-初始化标志：%s\r\n" % type(Led_Init_flag), Led_Init_flag)
+            print("————————————————————————————————————————————————")
+        # -----------------------------------------------------------------------------------#
+        #   步骤： 2   图像获取-摄像头初始化
+        #
+        #   标志：
+        # -----------------------------------------------------------------------------------#
+        if num == 2:
             pass
         # -----------------------------------------------------------------------------------#
-        #   步骤： 2   初始化热转印打印机
+        #   步骤： 3   初始化热转印打印机
         #   先完成热转印打印初始化；
         #   参数1     Pri_Init_flag   True表示成功初始化，False表示初始化失败
         # -----------------------------------------------------------------------------------#
-        elif num == 2:
+        elif num == 3:
             print("————————————————————————————————————————————————")
             Pri_Init_flag = Main.natPrint_init()  # 打印初始化
             print("热转印-初始化标志：%s\r\n" % type(Pri_Init_flag), Pri_Init_flag)
             print("————————————————————————————————————————————————")
         # -----------------------------------------------------------------------------------#
-        #   步骤： 3   图像获取-全流程
+        #   步骤： 4   图像获取-全流程
         #
         #   标志：
         # -----------------------------------------------------------------------------------#
-        elif num == 3:
+        elif num == 4:
             pass
         # -----------------------------------------------------------------------------------#
-        #   步骤： 4   图像处理-全流程
+        #   步骤： 5   图像处理-全流程
         #   一般需先完成图像获取，再执行图像处理
         #   参数1     flag    图像处理成功标志，True-成功，False-失败
         #   参数2     gray    发光矩阵数据，9*5
         #   参数3     nature  过敏原性质矩阵，9*5
         # -----------------------------------------------------------------------------------#
-        elif num == 4:
+        elif num == 5:
             print("————————————————————————————————————————————————")
             """
             参数1 flag    图像处理成功标志，True-成功，False-失败
@@ -94,11 +111,11 @@ class img_main:
             print("图像处理-性质矩阵：%s\r\n" % type(nature), nature)
             print("————————————————————————————————————————————————")
         # -----------------------------------------------------------------------------------#
-        #   步骤： 5   热转印打印数据
+        #   步骤： 6   热转印打印数据
         #   **  必须先完成热转印打印初始化，才能进行热转印打印
         #   参数1     Pri_print_flag   True表示成功打印，False表示打印失败
         # -----------------------------------------------------------------------------------#
-        elif num == 5:
+        elif num == 6:
             print("————————————————————————————————————————————————")
             time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 打印时间
             time_test = "2024-01-29 17:20:19"  # 测试时间
@@ -122,15 +139,15 @@ class img_main:
                           [34906, 1046234, 41228, 32066, 20377],
                           [12650, 53237, 10125, 8014, 5839],
                           [0, 9031, 6793, 2547, 3514]]
-            Pri_print_flag = Main.natPrint(Data_Base, Data_Nature, Data_Light)  # 打印数据
-            print("热转印-打印标志：%s\r\n" % type(Pri_print_flag), Pri_print_flag)
+            Pri_Print_flag = Main.natPrint(Data_Base, Data_Nature, Data_Light)  # 打印数据
+            print("热转印-打印标志：%s\r\n" % type(Pri_Print_flag), Pri_Print_flag)
             print("————————————————————————————————————————————————")
         # -----------------------------------------------------------------------------------#
-        #   步骤： 6   挂载移动文件
+        #   步骤： 7   挂载移动文件
         #   **  必须先完成热转印打印初始化，才能进行热转印打印
         #   参数1     Mount_flag   True表示成功挂载移动，False表示挂载移动失败
         # -----------------------------------------------------------------------------------#
-        elif num == 6:
+        elif num == 7:
             print("————————————————————————————————————————————————")
             original = "/home/topeet/test/start_rknn.sh"  # 表示需要移动文件
             final = "/mnt/mydev"  # 表示U盘挂载位置
@@ -145,5 +162,5 @@ class img_main:
 if __name__ == '__main__':
     Main = img_main()
 
-    Main.Run_step(4)
-    # Main.Run_step(5)
+    Main.Run_step(1)
+    # Main.Run_step(6)

@@ -1,4 +1,3 @@
-# cython:language_level=3
 import random
 import datetime
 import numpy as np
