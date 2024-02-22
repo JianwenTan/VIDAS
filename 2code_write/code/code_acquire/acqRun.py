@@ -106,8 +106,12 @@ class Acq_Run:
         if Con_Flag == True:
             #   调用需要保存日志的程序
             flag = self.Led_init()
+            if flag == True:
+                flag = 0
+            else:
+                flag = 1
         else:
-            flag = True
+            flag = 2
 
         end = time.perf_counter()  # 结束时间点
         print("时间消耗：%.2f s" % (end - start))
@@ -157,8 +161,12 @@ class Acq_Run:
         if Con_Flag == True:
             #   调用需要保存日志的程序
             flag = self.Camera_init()
+            if flag == True:
+                flag = 0
+            else:
+                flag = 1
         else:
-            flag = True
+            flag = 2
 
         end = time.perf_counter()  # 结束时间点
         print("时间消耗：%.2f s" % (end - start))
@@ -255,8 +263,12 @@ class Acq_Run:
         if Con_Flag == True:
             #   调用需要保存日志的程序
             flag = self.img_acquire(path_chache, path_save, name)
+            if flag == True:
+                flag = 0
+            else:
+                flag = 1
         else:
-            flag = True
+            flag = 2
 
         end = time.perf_counter()  # 结束时间点
         print("时间消耗：%.2f s" % (end - start))

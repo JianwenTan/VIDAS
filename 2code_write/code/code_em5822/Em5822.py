@@ -7,6 +7,7 @@ import serial.tools.list_ports
 import os
 import sys
 import time
+import platform
 
 from data_matrix import Data_matrix
 
@@ -72,8 +73,10 @@ class Em5822_out:
         start = time.perf_counter()  # 开始时间点
         #   数据暂时存储
         temp = sys.stdout
+        #   获取主控类型
+        Con_Flag = self.system_pla()
         #   判断输出到控制台，还是日志中
-        if self.Print_Save == True:
+        if self.Print_Save == True and Con_Flag == True:
             # 初始化将print输出到文件中
             now_time = datetime.datetime.now()
             time_now = now_time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -84,8 +87,16 @@ class Em5822_out:
         else:
             pass
 
-        #   调用需要保存日志的程序
-        flag = self.em5822_init()
+        #   判断主控系统类型，是否执行程序
+        if Con_Flag == True:
+            #   调用需要保存日志的程序
+            flag = self.em5822_init()
+            if flag == True:
+                flag = 0
+            else:
+                flag = 1
+        else:
+            flag = 2
 
         end = time.perf_counter()  # 结束时间点
         print("时间消耗：%.2f s" % (end - start))
@@ -217,8 +228,10 @@ class Em5822_out:
         start = time.perf_counter()  # 开始时间点
         #   数据暂时存储
         temp = sys.stdout
+        #   获取主控类型
+        Con_Flag = self.system_pla()
         #   判断输出到控制台，还是日志中
-        if self.Print_Save == True:
+        if self.Print_Save == True and Con_Flag == True:
             # 初始化将print输出到文件中
             now_time = datetime.datetime.now()
             time_now = now_time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -229,8 +242,16 @@ class Em5822_out:
         else:
             pass
 
-        #   调用需要保存日志的程序
-        flag = self.em5822_out(Base, Nature, Data_Light)
+        #   判断主控系统类型，是否执行程序
+        if Con_Flag == True:
+            #   调用需要保存日志的程序
+            flag = self.em5822_out(Base, Nature, Data_Light)
+            if flag == True:
+                flag = 0
+            else:
+                flag = 1
+        else:
+            flag = 2
 
         end = time.perf_counter()  # 结束时间点
         print("时间消耗：%.2f s" % (end - start))
@@ -242,6 +263,24 @@ class Em5822_out:
             pass
 
         return flag
+
+    #   3 系统检测
+    def system_pla(self):
+        #   系统信息标注
+        system_info = [
+            ['Linux', 'aarch64'],  # 嵌入式主控
+            ['Windows', 'AMD64'],  # Windows主机
+            ['Linux', 'X86_64']  # Linux主机
+        ]
+        #   获取系统ID
+        system_id = platform.system()
+        #   获取CPU的ID
+        machine_id = platform.machine()
+        #   判定是否为嵌入式主控
+        if system_id == system_info[0][0] and machine_id == system_info[0][1]:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
