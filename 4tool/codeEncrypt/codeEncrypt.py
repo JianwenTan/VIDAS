@@ -12,10 +12,10 @@ runFlag = input("是否执行删除程序：")
 #   步骤1：程序打包
 # ----------------------------------------------#
 #   程序打包目录
-dir_paths = ['./code/code_acquire',
-             './code/code_mount',
-             './code/code_em5822',
-             './code/code_process'
+dir_paths = ['./Code/code_acquire',
+             './Code/code_mount',
+             './Code/code_em5822',
+             './Code/code_process'
              ]
 
 #   程序打包文件遍历
@@ -31,8 +31,8 @@ setup(ext_modules=cythonize(files))
 del_paths = ['./build',
              './dist',
              './UNKNOWN.egg-info',
-             './code/code_mount/refer',
-             './code/code_acquire/refer'
+             './Code/code_mount/refer',
+             './Code/code_acquire/refer'
              ]
 #   移动文件，并删除文件
 if os.path.exists("./build"):
@@ -41,8 +41,10 @@ if os.path.exists("./build"):
     for i in os.listdir("./build"):
         if i.split('.', 1)[0] == "lib":
             dir_suffix = i.split('.', 1)[1]
+            print("已经获取打包目录后缀 %s" % dir_suffix)
     #   获取打包源码的后缀,cp38-win_amd64.pyd
     file_suffix = os.listdir("./build/lib.%s" % dir_suffix)[0].split('.', 1)[1]
+    print("已经获取打包源码后缀 %s" % file_suffix)
     #   遍历code目录下的文件
     for i in dir_paths:
         #   目录下的py源文件
@@ -56,10 +58,8 @@ if os.path.exists("./build"):
                 source_files.append(files_name)
         #   移动打包文件，并删除原始文件
         for k in source_files:
-            if os.path.exists("%s/%s.%s" % (i, k, file_suffix)):
-                os.remove("%s/%s.%s" % (i, k, file_suffix))
-            else:
-                shutil.move("./build/lib.%s/%s.%s" % (dir_suffix, k, file_suffix), i)
+            #   移动文件，若存在同名文件则覆盖
+            shutil.copy("./build/lib.%s/%s.%s" % (dir_suffix, k, file_suffix), i, follow_symlinks=True)
             #   删除c文件
             if os.path.exists("%s/%s.c" % (i, k)):
                 os.remove("%s/%s.c" % (i, k))
@@ -67,6 +67,7 @@ if os.path.exists("./build"):
                 #   删除py文件
                 if os.path.exists("%s/%s.py" % (i, k)):
                     os.remove("%s/%s.py" % (i, k))
+                print("已经删除源码！")
     #   删除其余文件
     for m in del_paths:
         if os.path.exists("%s" % m):

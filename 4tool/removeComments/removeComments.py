@@ -3,11 +3,10 @@ import re
 import os
 
 #   程序去掉注释目录
-dir_paths = ['./code/code_acquire',
-             './code/code_mount',
-             './code/code_mount/refer',
-             './code/code_em5822',
-             './code/code_process'
+dir_paths = ['./Code/code_acquire',
+             './Code/code_mount',
+             './Code/code_em5822',
+             './Code/code_process'
              ]
 
 

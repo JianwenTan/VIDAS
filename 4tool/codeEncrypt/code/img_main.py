@@ -8,7 +8,7 @@ sys.path.append("code_em5822")
 sys.path.append("code_mount")
 
 from code_process import imgRun
-from code_acquire import acqRun
+# from code_acquire import acqRun
 from code_em5822 import Em5822
 from code_mount import mount
 
@@ -18,7 +18,7 @@ class img_main:
     #   初始化
     def __init__(self):
         self.Pro = imgRun.Img_run()
-        self.Acq = acqRun.Acq_Run()
+        # self.Acq = acqRun.Acq_Run()
         self.Pri = Em5822.Em5822_out()
         self.Move = mount.Mount_move()
 
